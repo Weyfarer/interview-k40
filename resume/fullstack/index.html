@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>伍裕丰 - 全栈开发工程师（Node.js / Vue / AI 应用）</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 0; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+    color: #2b2b2b;
+    font-size: 9pt;
+    line-height: 1.58;
+    padding: 9mm 12mm 7mm 12mm;
+  }
+  .header { border-bottom: 2.2px solid #1a4e7a; padding-bottom: 6px; margin-bottom: 9px; }
+  .name { font-size: 20pt; font-weight: 700; color: #1a4e7a; letter-spacing: 2px; }
+  .sub { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 3px; font-size: 8.5pt; color: #444; }
+  .intent { display: inline-block; background: #1a4e7a; color: #fff; padding: 1px 8px; border-radius: 2px; font-size: 8pt; margin-top: 4px; }
+
+  .sec { margin-top: 8px; }
+  .sec-title {
+    font-size: 10.5pt; font-weight: 700; color: #1a4e7a;
+    border-left: 4px solid #1a4e7a; padding-left: 6px; margin-bottom: 5px;
+  }
+  .skills { display: block; }
+  .skill-item { width: 100%; padding: 2px 0; }
+  .skill-item b { color: #1a4e7a; }
+
+  .job { margin-bottom: 7px; }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .job-title { font-size: 9.5pt; font-weight: 700; }
+  .job-title .co { color: #1a4e7a; }
+  .job-title .role { color: #666; font-weight: 400; font-size: 8.5pt; }
+  .job-time { font-size: 8pt; color: #666; white-space: nowrap; }
+  .job ul { margin-left: 14px; }
+  .job li { margin: 2px 0; }
+
+  .proj { margin-bottom: 7px; page-break-inside: avoid; }
+  .proj-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .proj-title { font-size: 9.5pt; font-weight: 700; }
+  .proj-time { font-size: 8pt; color: #666; white-space: nowrap; }
+  .proj-tech { font-size: 8pt; color: #555; margin: 0.5px 0; }
+  .proj-tech b { color: #1a4e7a; }
+  .proj ul { margin-left: 14px; }
+  .proj li { margin: 2px 0; }
+
+  .edu { display: flex; justify-content: space-between; }
+  .eval li { margin: 2px 0; }
+  .eval { margin-left: 14px; }
+
+  /* ===== 屏幕层（2026-10 由 DSH 添加；打印层保持原样） ===== */
+  @media screen {
+    body { font-size: 15px; line-height: 1.72; padding: 0 0 48px; background: #f4f6f8; color: #2b2b2b; }
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      max-width: 820px; margin: 0 auto; padding: 12px 0 10px; font-size: 13px; color: #5b6670;
+    }
+    .toolbar .t-name { font-weight: 700; color: #1a4e7a; letter-spacing: .5px; }
+    .toolbar .t-note { color: #8a939b; font-weight: 400; margin-left: 6px; }
+    .toolbar a {
+      display: inline-block; padding: 6px 13px; margin-left: 8px; border-radius: 4px; text-decoration: none;
+      border: 1px solid #d3d9de; background: #fff; color: #1a4e7a; white-space: nowrap;
+    }
+    .toolbar a.primary { background: #1a4e7a; border-color: #1a4e7a; color: #fff; }
+    .page {
+      width: 100%; max-width: 820px; box-sizing: border-box; margin: 0 auto; padding: 34px 46px 40px;
+      background: #fff; border-radius: 8px; box-shadow: 0 2px 16px rgba(24, 43, 61, .08);
+    }
+    .page .name { font-size: 30px; }
+    .page .sec-title { font-size: 16.5px; margin-bottom: 8px; }
+    .page .job-title, .page .proj-title { font-size: 15px; }
+    .page .sub, .page .job-time, .page .proj-time, .page .proj-tech { font-size: 13px; }
+    .page .intent { font-size: 12.5px; padding: 2px 10px; }
+    .page .sec { margin-top: 18px; }
+    .page .job, .page .proj { margin-bottom: 14px; }
+    .page .job li, .page .proj li, .page .eval li { margin: 4px 0; }
+    .page .job ul, .page .proj ul, .page .eval { margin-left: 20px; }
+    .toolbar a:hover { border-color: #1a4e7a; }
+  }
+  @media screen and (max-width: 640px) {
+    body { padding: 0 0 32px; }
+    .toolbar { padding: 10px 14px 8px; }
+    /* 宽度用 calc 扣掉左右边距，而不是靠 margin —— margin 不计入 width:100%，会横向溢出 10px（2026-10-09 实测抓到） */
+    .page { width: calc(100% - 20px); max-width: none; margin: 0 auto; padding: 20px 16px 26px; border-radius: 6px; }
+    .page .name { font-size: 24px; }
+    .page .sec-title { font-size: 16px; }
+    .page { font-size: 14.5px; }
+    .page .sub { gap: 2px 10px; }
+    /* 窄屏把「标题 + 时间」拆成上下两行：左右对挤会把公司名/职位捏碎（2026-10-09 移动端实测抓到） */
+    .page .job-head, .page .proj-head, .page .edu { display: block; }
+    .page .job-time, .page .proj-time { display: block; margin-top: 1px; }
+    .page .job-title .role { display: block; font-size: 12.5px; margin-top: 1px; }
+  }
+  @media print {
+    .toolbar { display: none !important; }
+    .page { max-width: none; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+  }
+
+  /* ===== 多岗位支持（2026-10-09 追加）===== */
+  /* 注：曾试过在 @media print 里改 body padding 来把前端版从 3 页压回 2 页 —— 实测无效
+     （原样式里的 body padding 仍胜出，浏览器算出来还是 9mm/12mm/7mm），已删除该规则。
+     最终办法是**减内容**（技能栏 8→7 条、自我评价 5→4 条），文件末尾有说明。 */
+  @media screen {
+    .toolbar .nav a { border-color: transparent; background: transparent; color: #5b6670; padding: 6px 8px; }
+    .toolbar .nav a:hover { color: #1a4e7a; text-decoration: underline; }
+    .pick { max-width: 820px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 34px 46px 40px; box-shadow: 0 2px 16px rgba(24,43,61,.08); }
+    .pick h1 { font-size: 26px; color: #1a4e7a; letter-spacing: 1px; }
+    .pick .lead { color: #5b6670; font-size: 14px; margin-top: 6px; }
+    .pick .meta { color: #8a939b; font-size: 12.5px; margin-top: 4px; }
+    .pick .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 6px; }
+    .pick .card { display: block; border: 1px solid #dbe2e8; border-radius: 8px; padding: 18px 20px 18px; text-decoration: none; color: inherit; transition: border-color .15s, box-shadow .15s; }
+    .pick .card:hover { border-color: #1a4e7a; box-shadow: 0 4px 14px rgba(26,78,122,.12); }
+    .pick .card .role { font-size: 17px; font-weight: 700; color: #1a4e7a; }
+    .pick .card .hint { font-size: 13px; color: #5b6670; margin-top: 8px; line-height: 1.7; }
+    .pick .card .files { font-size: 12.5px; color: #8a939b; margin-top: 12px; }
+    .pick .foot { border-top: 1px solid #eef1f4; margin-top: 26px; padding-top: 16px; font-size: 12.5px; color: #8a939b; line-height: 1.9; }
+  }
+  @media screen and (max-width: 640px) {
+    .pick { width: calc(100% - 20px); margin: 0 auto; padding: 20px 16px 26px; border-radius: 6px; }
+    .pick h1 { font-size: 21px; }
+    .pick .cards { grid-template-columns: 1fr; gap: 12px; }
+  }
+  @media print { .pick .cards { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div><span class="t-name">伍裕丰 · 在线简历 <span class="t-note">全栈方向</span></span></div>
+  <div class="nav"><a href="../">岗位切换</a><a href="../frontend/">前端方向</a><a class="primary" href="resume.pdf" download>下载 PDF 简历</a></div>
+</div>
+
+<div class="page">
+<div class="header">
+  <div class="name">伍裕丰</div>
+  <div class="sub">
+    <span>男 · 28 岁 · 7 年 前端开发经验</span>
+    <span>全日制本科 · 电子信息工程</span>
+    <span>电话：13036687205</span>
+    <span>邮箱：13036687205@163.com</span>
+  </div>
+  <div class="intent">求职意向：全栈开发工程师（Node.js / Vue / AI 应用方向）</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">专业技能</div>
+  <div class="skills">
+    <div class="skill-item"><b>Node.js / TypeScript</b>：Node.js 服务端开发（Express，个人项目实践）、自动化工具链与 CLI 开发（发布 npm 包 svn-auto-deploy）、Excel 词条提取等效率工具</div>
+    <div class="skill-item"><b>API 与权限</b>：RESTful API 设计与联调、JWT 鉴权与权限控制（菜单 / 按钮级权限、四级权限模型）、异常处理与安全意识</div>
+    <div class="skill-item"><b>数据库与缓存</b>：PostgreSQL / Redis 基础（个人项目实践：数据建模、索引设计、SQL 查询、缓存策略）</div>
+    <div class="skill-item"><b>Vue 技术栈</b>：熟悉 Vue2/Vue3；Vue Router / Pinia / Vuex、TypeScript、Vite</div>
+    <div class="skill-item"><b>工程化与质量</b>：ESLint 全量校验、单元测试（Jest）、Code Review、Git 工作流；打包体积与图片加载优化</div>
+    <div class="skill-item"><b>部署与 DevOps</b>：Docker Compose 容器化部署、Node.js 自动化部署脚本、Nginx 托管、域名解析与 HTTPS、线上问题排查</div>
+    <div class="skill-item"><b>多端开发</b>：原生微信小程序 + uniapp（3 个小程序上线）；PC / H5 多端适配</div>
+    <div class="skill-item"><b>AI 应用</b>：调用 LLM API 开发提效工具（词条 AI 初译、接口 Mock 生成）；AI 编程工具辅助开发、重构与问题分析</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">工作经历</div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title"><span class="co">北京创联教育投资有限公司</span><span class="role"> ｜ Web 前端开发</span></div>
+      <div class="job-time">2024.12 - 2026.08</div>
+    </div>
+    <ul>
+      <li>并行承担 <b>5+ 条产品线</b>前端开发：一体化考试平台（职证宝小程序 / 考务后台 / 在线阅卷端）、网销平台（后台 / 渠道端 / 官网 / 专题页）、联合国官网、志愿者项目、安职宝，均按期交付上线</li>
+      <li>参与 <b>V2.9 / v3.0.x / v3.0.2 / v1.1~v1.3.2 / v1.2 / v1.3</b> 多轮版本迭代开发与上线</li>
+      <li>搭建联合国官网（移动端适配 + 设备分流），独立完成域名解析与部署上线（cifal-sdgt.com），留资表单对接钉钉接口</li>
+      <li>推动工程质量建设：ESLint 全量校验、组件单元测试、公共组件封装与冗余代码清理，显著提升代码可维护性</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title"><span class="co">深圳市吉祥腾达科技有限公司</span><span class="role"> ｜ Web 前端开发</span></div>
+      <div class="job-time">2022.07 - 2024.09</div>
+    </div>
+    <ul>
+      <li>路由器管理页面新功能开发及客户定制化功能开发</li>
+      <li>独立负责后台管理项目功能维护与完全重构</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title"><span class="co">深圳瀚维智能医疗科技有限公司</span><span class="role"> ｜ Web 前端开发</span></div>
+      <div class="job-time">2020.11 - 2022.07</div>
+    </div>
+    <ul>
+      <li>移动端 H5 医疗报告查询系统、医疗数据后台管理系统（PC 端）项目搭建与开发</li>
+      <li>独自负责用户医疗筛查预约系统（H5）搭建开发；原生微信小程序开发，保障内部运营全流程</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title"><span class="co">成都番茄数智科技有限公司</span><span class="role"> ｜ Web 前端开发</span></div>
+      <div class="job-time">2019.08 - 2020.11</div>
+    </div>
+    <ul>
+      <li>PC 端页面开发，参与项目重构</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">项目经历（时间由近到远）</div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">文件快传平台</div>
+      <div class="proj-time">2026.06 - 2026-10</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：Node.js + Express + PostgreSQL + Redis + Docker + Vue3</div>
+    <ul>
+      <li>从 0 到 1 实现文件分享服务：文件上传（multer）、分享链接生成、下载与访问统计，RESTful 接口</li>
+      <li>PostgreSQL 数据建模与索引设计（文件记录单表：元信息、分享码唯一索引、过期时间、下载计数）</li>
+      <li>Redis 缓存文件元信息（cache-aside 模式）与下载计数，node-cron 定时清理过期文件</li>
+      <li>配套 Vue3 管理端：文件上传、链接管理与统计可视化</li>
+      <li>统一错误处理与请求日志中间件；Jest + supertest 接口测试；Docker Compose 一键部署（API + PostgreSQL + Redis）</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">网销平台 · 后台管理 / 渠道端 / WEB 端 / 6 个专题页</div>
+      <div class="proj-time">2025.05 - 2026.10</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：Vue2 / Vue3 + Element UI + Vant</div>
+    <ul>
+      <li><b>接口 Mock 生成</b>：解析后端接口文档自动生成 mock 数据，前后端并行开发、联调互不阻塞</li>
+      <li><b>运营位配置化</b>：金刚区等运营位支持拖拽排序、启停与上下架配置，运营人员零开发即可调整首页布局</li>
+      <li><b>专题页模板化交付</b>：沉淀精选课程等通用业务组件，6 个职业技能专题页模板化快速产出（大数据技术、数字化管理师等），动画效果与一键至顶交互统一实现</li>
+      <li><b>多端业务模型复用</b>：后台 / 渠道端 / WEB 端共享同一业务模型、差异化渲染，三端并行迭代降低重复开发</li>
+      <li><b>批量运营能力</b>：批量设置售价、批量下载等能力支撑渠道高效运营</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">志愿者项目 · 小程序端 + Admin 端</div>
+      <div class="proj-time">2025.09 - 2025.10</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：原生微信小程序 + Vue2</div>
+    <ul>
+      <li><b>完整权限体系后台</b>：Admin 端落地登录鉴权与菜单权限控制，覆盖用户 / 志愿者 / 团队 / 活动 / 订单 / 权限六大模块</li>
+      <li><b>双端并行交付</b>：小程序端与后台同期开发、同期上线，双端功能一次闭环</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">一体化考试平台 · 职证宝小程序 / 考务后台 / 在线阅卷端</div>
+      <div class="proj-time">2024.12 - 2025.07</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：uniapp + Vue2 + Nuxt3 + Element UI</div>
+    <ul>
+      <li><b>题目组件化架构</b>：以知识树 / 题目 / 答案解析 / 答题卡为核心组件，一套题目组件复用于刷题、背题、错题、收藏、模拟测试五大场景，多场景零重复开发；组件同时适配小程序与 H5 全屏</li>
+      <li><b>答题卡双向联动</b>：实现答题卡与题目区双向定位、跳题联动，解决长题列表下定位错位与滚动卡顿</li>
+      <li><b>考试业务复杂校验</b>：成绩生成二次确认、多题型得分框渲染与总分校验，覆盖题型边界场景</li>
+      <li><b>考务全流程</b>：覆盖考生编排、人员派遣、准考证生成、试卷配发的完整链路</li>
+      <li><b>SSR 阅卷端</b>：基于 Nuxt3 搭建阅卷端，支持阅卷计划、阅卷配置、专家签到、考生试卷水印</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">安职宝小程序</div>
+      <div class="proj-time">2025.04 - 2025.05</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：uniapp</div>
+    <ul>
+      <li><b>导航栏与表单组件化</b>：隐藏默认导航栏、开发自定义导航栏组件；封装统一表单组件，简历填写类多模块表单一键复用</li>
+      <li>V1.0 项目初始化搭建与 UI 框架选型</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">TendaWifi 后台管理平台（PC 端）</div>
+      <div class="proj-time">2024.03 - 2024.09</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：Vue2 + Vuex + Element UI</div>
+    <ul>
+      <li><b>四级权限模型</b>：路由导航守卫 + 自定义指令 v-permission 实现「管理员 / 租户 - 菜单 - 页面 - 按钮」四级权限，支撑总平台按租户拆分子平台</li>
+      <li><b>18 国语言国际化体系</b>：完整 i18n 方案支持 18 国语言，自研 Node.js 词条提取工具（平均 18s / 词条），并接入 LLM API 实现 AI 初译 + 人工校对，2000+ 词条初译由数天缩短至数小时</li>
+      <li><b>请求层统一封装</b>：Axios 二次封装 + MD5 敏感数据加密，统一鉴权与请求规范</li>
+      <li><b>遗留系统重构</b>：主导后台管理项目完全重构，梳理模块边界、统一技术栈与组件规范</li>
+    </ul>
+  </div>
+
+  <div class="proj">
+    <div class="proj-head">
+      <div class="proj-title">成都市育龄妇女健康数据管理平台（PC 端）</div>
+      <div class="proj-time">2021.09 - 2021.11</div>
+    </div>
+    <div class="proj-tech"><b>技术栈</b>：Vue2 + Element UI</div>
+    <ul>
+      <li><b>自动化部署</b>：Node.js 脚本实现一键打包部署测试服务器，支撑多项目快速迭代</li>
+      <li><b>配置化低代码实践</b>：二次封装 el-table / el-form，以配置项驱动表格与表单自动生成、配置独立抽离，简化重复页面开发</li>
+      <li><b>模块自动引入</b>：利用 Webpack require.context 实现模块文件自动引入，减少手动维护成本</li>
+      <li><b>表格自适应</b>：表格高度随屏幕自适应、列表内部滚动，兼容基层机构多种显示器比例</li>
+      <li>市级平台（获院方感谢信），服务 23 家妇幼保健机构与 500+ 基层卫生服务机构</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">教育背景</div>
+  <div class="edu">
+    <div><b>成都工业学院</b> · 电子信息工程（全日制本科）</div>
+    <div>2016.09 - 2020.07</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">自我评价</div>
+  <ul class="eval">
+    <li>7 年 前端开发与 Node.js 工具链实践，1 年 8 个月并行交付 <b>5+ 条产品线</b>，技术栈切换与项目上手速度快</li>
+    <li>工程化意识强：ESLint 规范、单元测试、Code Review、自动化部署工具链，注重代码质量与可维护性</li>
+    <li>主动拥抱 AI：调用 LLM API 开发提效工具，AI 编程工具辅助开发、重构与问题分析</li>
+    <li>离职后系统学习 Node.js 后端（Express / PostgreSQL / Redis / Docker），自研文件快传平台补齐全栈能力</li>
+    <li>具备系统性思维与业务理解能力，能推动技术方案落地；线上问题响应快，多次保障版本稳定上线</li>
+  </ul>
+</div>
+</div>
+
+</body>
+</html>

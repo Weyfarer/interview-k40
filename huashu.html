@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
+<title>面试话术（简版） · 面试资料</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a4e7a'/%3E%3Ctext x='32' y='43' font-size='32' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E9%9D%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar">
+  <a class="back" href="./index.html">目录</a>
+  <div class="topbar-title">面试话术（简版）</div>
+  <button class="theme" id="themeBtn" type="button" aria-label="切换深浅色">◐</button>
+</header>
+<main class="wrap">
+  <details class="toc">
+    <summary>本页目录<span class="count">9</span></summary>
+    <ol>
+      <li><a href="#s1">一、一句话</a></li>
+      <li><a href="#s2">二、自我介绍（约 80 秒）</a></li>
+      <li><a href="#s3">三、经历（四句，索引）</a></li>
+      <li><a href="#s4">四、项目（陈述 + 钩子）</a></li>
+      <li><a href="#s5">五、钩子怎么用（重要）</a></li>
+      <li><a href="#s6">六、常见问题（一句话）</a></li>
+      <li><a href="#s7">七、五条纪律</a></li>
+      <li><a href="#s8">八、反问</a></li>
+      <li><a href="#s9">九、面试前五分钟</a></li>
+    </ol>
+  </details>
+<article class="doc">
+<h1>面试话术（简版·陈述 + 钩子）</h1>
+<blockquote>
+<p>只讲事实，不带感受。每段最后一句是钩子：说完停一下，等对方问，别自己接下去。
+全版在 <code>面试话术-v2.md</code>，追问细节在 <code>面试题与答案-v3.md</code>。</p>
+</blockquote>
+<hr />
+<h2 id="s1">一、一句话</h2>
+<p>前端七年，四家公司，主要做后台管理系统。</p>
+<hr />
+<h2 id="s2">二、自我介绍（约 80 秒）</h2>
+<blockquote>
+<p>我叫伍裕丰，做前端，七年。</p>
+<p>2019 年 8 月到 2020 年 11 月在成都番茄数智，做招引企业评估系统，Vue2 加 Element UI 和 ECharts，写页面和图表，参与过一次重构。<strong>那套系统做过一次整体重构，列表和表单改动最多。</strong></p>
+<p>2020 年 11 月到 2022 年 7 月在瀚维医疗，做医疗数据系统：报告查询 H5、筛查预约 H5、成都市育龄妇女健康数据管理平台。Vue2 加 Element UI，前端结构是我搭的。<strong>育龄平台要覆盖 23 家妇幼机构和 500 多个基层点，表格适配改过几轮。</strong></p>
+<p>2022 年 7 月到 2024 年 9 月在腾达，做路由器管理页面和后台管理平台，Vue2 加公司自己的 reasy-ui。主要做多语言适配和后台重写。<strong>那套页面要出 19 个语言包，最早词条是手工一条条对的。</strong></p>
+<p>2024 年 12 月到 2026 年 8 月在创联教育，做一体化考试平台考务后台、职证宝小程序、网销平台、志愿者双端、联合国官网。Vue3 加 TypeScript、Element Plus。<strong>考试平台里阅卷那条线流程最长，从计划到成绩中间环节最多。</strong></p>
+<p>2026 年 8 月离职，现在在学 Node.js 后端。</p>
+<p>技术栈是 Vue2、Vue3、TypeScript、Element UI、Element Plus、ECharts、uni-app、Vite 和 Webpack。</p>
+</blockquote>
+<p>（加粗的是钩子，念的时候不用念&quot;加粗&quot;，正常说出来就行，说完停半秒。）</p>
+<hr />
+<h2 id="s3">三、经历（四句，索引）</h2>
+<ul>
+<li><strong>番茄</strong>：做页面开发和图表，参与一次系统重构。</li>
+<li><strong>瀚维</strong>：独立负责 H5 和 PC 后台前端，从零搭项目结构。</li>
+<li><strong>腾达</strong>：负责路由器管理页开发、后台平台重写、多语言适配。</li>
+<li><strong>创联</strong>：负责考试平台考务后台，另兼四条产品线的前端开发。</li>
+<li><strong>现在</strong>：学 Node.js 后端。</li>
+</ul>
+<p>（这段是索引，展开在下面的项目里，别在这儿加评价。）</p>
+<hr />
+<h2 id="s4">四、项目（陈述 + 钩子）</h2>
+<p><strong>一体化考试平台（创联）</strong></p>
+<blockquote>
+<p>Vue3 + TypeScript + Element Plus，考务后台。负责阅卷、监考、监管、机构管理。阅卷包括阅卷计划、阅卷老师分配、专家签到、试卷水印、成绩人脸记录。iep-web 仓库我的提交是 131 次。<strong>导出 PDF 的时候，富文本里的 <code>&lt;br&gt;</code> 会漏出来，这块查了一阵。</strong></p>
+</blockquote>
+<p><strong>腾达路由器管理 + 后台管理平台</strong></p>
+<blockquote>
+<p>Vue2 + reasy-ui。管理页面包含登录、快速设置、WiFi、WAN、家长控制、状态、高级设置、工具，路由按模块拆分。共 19 个语言包，词条用 Node 脚本从 Excel 提取生成。后台管理平台重写，负责权限、国际化和请求层。<strong>重写的时候系统不能停，只能一个模块一个模块换。</strong></p>
+</blockquote>
+<p><strong>成都市育龄妇女健康数据管理平台（瀚维）</strong></p>
+<blockquote>
+<p>Vue2 + Element UI，服务 23 家妇幼保健机构和 500 多个基层机构。封装了配置化表格和表单，用 <code>require.context</code> 自动引入接口和 store 模块，表格高度按屏幕自适应，写了 Node 部署脚本。<strong>常见页面用配置生成，特殊的还是单独写。</strong></p>
+</blockquote>
+<p><strong>职证宝小程序</strong></p>
+<blockquote>
+<p>uni-app。题目、答案解析、答题卡三个组件，刷题、模拟测试、错题、收藏复用同一套；知识树在刷题页。<strong>答题卡和题目区是双向联动，滚动定位在小程序里不太好控。</strong></p>
+</blockquote>
+<p><strong>志愿者项目</strong></p>
+<blockquote>
+<p>原生微信小程序 + Vue3 后台，双端同期上线；后台有菜单权限。<strong>双端是接口先定、两边并行做的。</strong></p>
+</blockquote>
+<hr />
+<h2 id="s5">五、钩子怎么用（重要）</h2>
+<ol>
+<li><strong>一次面试抛两三个就够</strong>，不是每段都要抛。对方顺着问了，就把这段讲透，别再往下抛下一个。</li>
+<li><strong>说完钩子停半秒</strong>。停了对方没问，你再继续；自己接下去就白抛了。</li>
+<li><strong>钩子必须真能接住</strong>。每条后面都对应一个具体问题，答案在 <code>面试题与答案-v3.md</code> 第六节：
+<ul>
+<li>&quot;整体重构&quot; → 为什么重构、怎么保证不出事</li>
+<li>&quot;表格适配&quot; → 怎么算高度、4:3 屏怎么办</li>
+<li>&quot;词条手工对&quot; → 脚本怎么写的、18 秒一条</li>
+<li>&quot;中间环节最多&quot; → 业务流程怎么理的</li>
+<li>&quot;PDF 的 br&quot; → 具体怎么坏的、怎么修</li>
+<li>&quot;模块一个模块换&quot; → 重构顺序、怎么回滚</li>
+<li>&quot;配置的边界&quot; → 哪些能配、哪些只能单独写</li>
+<li>&quot;滚动定位&quot; → 双向联动、setData 性能</li>
+<li>&quot;接口先定&quot; → 双端排期、字段对齐</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="s6">六、常见问题（一句话）</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>为什么离开腾达</td>
+<td>后期以维护和客户定制为主，想做完整产品线。</td>
+</tr>
+<tr>
+<td>为什么离开创联</td>
+<td>按实际情况说，不说公司问题。</td>
+</tr>
+<tr>
+<td>空窗期做什么</td>
+<td>学 Node.js，写练习项目，看 Vue3 源码。</td>
+</tr>
+<tr>
+<td>Vue2 还是 Vue3</td>
+<td>都用，这两年主力是 Vue3 + TypeScript。</td>
+</tr>
+<tr>
+<td>权限怎么做</td>
+<td>路由守卫管页面，指令管按钮，后端再校验。</td>
+</tr>
+<tr>
+<td>国际化怎么做</td>
+<td>语言包 + 词条脚本 + 运行时切换。</td>
+</tr>
+<tr>
+<td>性能优化</td>
+<td>懒加载、拆包、分页、防抖。</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>文档写得少，现在在补。</td>
+</tr>
+<tr>
+<td>职业规划</td>
+<td>前端为主，补齐后端。</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="s7">七、五条纪律</h2>
+<ol>
+<li>词条 AI 翻译、Mock 生成器还没落地，说&quot;方案设计过&quot;，不说&quot;做过&quot;。</li>
+<li>文件快传平台没写完就说&quot;在做&quot;，说清进度。</li>
+<li>零提交的仓库（iep-ers、sales-web）说&quot;参与&quot;，不说&quot;主导&quot;。</li>
+<li>TendaWifi 的权限和 18 国语言源码不在本机，讲方案，不承诺演示。</li>
+<li>不用&quot;赋能、闭环、抓手、沉淀、组合拳&quot;这类词。</li>
+</ol>
+<hr />
+<h2 id="s8">八、反问</h2>
+<ul>
+<li>这个岗位目前的主要问题是什么？</li>
+<li>团队有没有组件库、Code Review、固定的发版流程？</li>
+<li>前三个月期望我完成什么？</li>
+</ul>
+<hr />
+<h2 id="s9">九、面试前五分钟</h2>
+<ol>
+<li>一句话：前端七年，四家公司，做后台系统。</li>
+<li>三个项目：考试平台、腾达、育龄平台，每个三句。</li>
+<li>三个数字：131 次提交、252 个 .vue、19 个语言包。</li>
+<li>两句实话：后端在学、AI 翻译还在方案。</li>
+</ol>
+<hr />
+<p><em>简版结束。钩子是给人递话头，不是背台词；记不住原句就记&quot;这块有个什么事&quot;，用自己的话说。</em></p>
+
+</article>
+<nav class="pn-nav"><a class="pn next" href="./liangdian.html"><span>下一篇</span><b>项目亮点（创联 + 瀚维）</b></a></nav>
+<footer class="foot">
+  <span>面试话术（简版）</span>
+  <span>生成于 2026-10-23</span>
+</footer>
+</main>
+
+<button class="totop" id="toTop" type="button" aria-label="回到顶部">↑</button>
+<script src="assets/app.js"></script>
+</body>
+</html>

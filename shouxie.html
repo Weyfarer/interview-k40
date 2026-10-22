@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
+<title>手写题 · 面试资料</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a4e7a'/%3E%3Ctext x='32' y='43' font-size='32' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E9%9D%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar">
+  <a class="back" href="./index.html">目录</a>
+  <div class="topbar-title">手写题</div>
+  <button class="theme" id="themeBtn" type="button" aria-label="切换深浅色">◐</button>
+</header>
+<main class="wrap">
+  <details class="toc">
+    <summary>本页目录<span class="count">8</span></summary>
+    <ol>
+      <li><a href="#s1">0. 现场写题的节奏</a></li>
+      <li><a href="#s2">1. 深拷贝</a></li>
+      <li><a href="#s3">2. 防抖 debounce</a></li>
+      <li><a href="#s4">3. 节流 throttle</a></li>
+      <li><a href="#s5">4. Promise 并发控制</a></li>
+      <li><a href="#s6">5. 数组去重</a></li>
+      <li><a href="#s7">6. 顺手也要会（短题）</a></li>
+      <li><a href="#s8">7. 写题时的加分细节</a></li>
+    </ol>
+  </details>
+<article class="doc">
+<h1>手写题专项（面试现场写）</h1>
+<blockquote>
+<p>配套：<code>面试题与答案-v3.md</code>、<code>面试话术-v2.md</code>
+重点四题：深拷贝、防抖节流、Promise 并发控制、数组去重。后面附了十道常见的&quot;顺手也会问&quot;的短题。
+每题的写法：<strong>题目怎么问 → 参考实现 → 面试时怎么讲 → 追问怎么答 → 常见错误</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="s1">0. 现场写题的节奏</h2>
+<ol>
+<li><strong>先问边界</strong>：输入是什么类型？要不要处理循环引用？失败要不要中断？（问一句，面试官就知道你想过）</li>
+<li><strong>写主逻辑</strong>，别一上来就补边界，先把主干跑通。</li>
+<li><strong>补边界</strong>：空值、异常、this、参数透传。</li>
+<li><strong>口头跑一个用例</strong>，边说边指代码。</li>
+<li><strong>说复杂度和取舍</strong>：时间/空间，为什么这么选。</li>
+</ol>
+<p>写不出来别硬撑。说一句&quot;我先写个基础版，边界我再补&quot;，比卡在那里强。</p>
+<hr />
+<h2 id="s2">1. 深拷贝</h2>
+<p><strong>怎么问</strong>：手写一个深拷贝，考虑循环引用、Date、Map、Set。</p>
+<p><strong>参考实现</strong></p>
+<pre><code class="language-js">function deepClone(target, map = new WeakMap()) {
+  // 基本类型和函数直接返回（函数一般不拷贝，直接复用）
+  if (target === null || typeof target !== 'object') return target;
+
+  // 循环引用：拷贝过的直接返回副本
+  if (map.has(target)) return map.get(target);
+
+  // 特殊对象
+  if (target instanceof Date) return new Date(target);
+  if (target instanceof RegExp) return new RegExp(target.source, target.flags);
+
+  if (target instanceof Map) {
+    const copy = new Map();
+    map.set(target, copy);
+    target.forEach((v, k) =&gt; copy.set(deepClone(k, map), deepClone(v, map)));
+    return copy;
+  }
+  if (target instanceof Set) {
+    const copy = new Set();
+    map.set(target, copy);
+    target.forEach(v =&gt; copy.add(deepClone(v, map)));
+    return copy;
+  }
+
+  // 数组和普通对象
+  const copy = Array.isArray(target)
+    ? []
+    : Object.create(Object.getPrototypeOf(target)); // 保留原型
+
+  map.set(target, copy);
+
+  for (const key of Reflect.ownKeys(target)) {
+    const desc = Object.getOwnPropertyDescriptor(target, key);
+    if (desc &amp;&amp; desc.enumerable) {
+      copy[key] = deepClone(target[key], map);
+    }
+  }
+  return copy;
+}
+</code></pre>
+<p><strong>面试时怎么讲</strong></p>
+<blockquote>
+<p>核心就三件事：递归、区分类型、用 WeakMap 记已拷贝的对象解决循环引用。日期和正则要单独 new，Map/Set 要遍历重建，普通对象用 <code>Object.create(原型)</code> 保留原型链。用 WeakMap 而不是 Map，是因为它不阻止垃圾回收，拷贝完这些临时引用就能被回收。</p>
+</blockquote>
+<p><strong>追问</strong></p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>追问</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>为什么不用 <code>JSON.parse(JSON.stringify())</code>？</td>
+<td>丢函数、undefined、Symbol；Date 变字符串；RegExp 变空对象；循环引用直接报错。只适合纯 JSON 数据。</td>
+</tr>
+<tr>
+<td>函数要不要拷贝？</td>
+<td>一般不拷贝，函数是行为不是数据，直接复用引用；真要拷贝得用 <code>eval</code> 或 <code>new Function</code>，不推荐。</td>
+</tr>
+<tr>
+<td>WeakMap 和 Map 区别？</td>
+<td>WeakMap 的 key 必须是对象、弱引用、不可遍历；这里用它正好，不阻碍 GC。</td>
+</tr>
+<tr>
+<td>实际项目里用吗？</td>
+<td>用 <code>structuredClone</code>（浏览器原生，支持循环引用、Date、Map/Set），手写是面试考思路。</td>
+</tr>
+<tr>
+<td>原型上的属性要拷贝吗？</td>
+<td>一般只拷自有可枚举属性，<code>for...in</code> 会把原型上的也遍历出来，所以用 <code>Object.keys</code> 或 <code>Reflect.ownKeys</code> + enumerable 判断。</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>常见错误</strong></p>
+<ul>
+<li>忘了循环引用，碰到自己引用自己就栈溢出。</li>
+<li>只处理了数组和普通对象，Date 被当成普通对象拷成 <code>{}</code>。</li>
+<li><code>for...in</code> 把原型链上的属性也拷了。</li>
+</ul>
+<hr />
+<h2 id="s3">2. 防抖 debounce</h2>
+<p><strong>怎么问</strong>：手写防抖，支持立即执行和取消。</p>
+<p><strong>参考实现</strong></p>
+<pre><code class="language-js">function debounce(fn, wait = 300, immediate = false) {
+  let timer = null;
+  let result;
+
+  function debounced(...args) {
+    const callNow = immediate &amp;&amp; !timer;   // 立即执行模式：只有第一次触发时执行
+    if (timer) clearTimeout(timer);
+
+    timer = setTimeout(() =&gt; {
+      timer = null;
+      if (!immediate) result = fn.apply(this, args);
+    }, wait);
+
+    if (callNow) result = fn.apply(this, args);
+    return result;
+  }
+
+  debounced.cancel = () =&gt; {
+    if (timer) clearTimeout(timer);
+    timer = null;
+  };
+
+  return debounced;
+}
+</code></pre>
+<p><strong>用在哪（讲项目）</strong></p>
+<blockquote>
+<p>搜索框输入、窗口 resize 后重算表格高度、表单字段连续修改后的异步校验。育龄平台那个表格自适应就是 resize 防抖，职证宝答题卡滚动用的是节流。</p>
+</blockquote>
+<p><strong>追问</strong></p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>追问</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>防抖和节流的区别？</td>
+<td>防抖是&quot;停下来才执行&quot;，节流是&quot;固定频率执行&quot;。搜索框用防抖，滚动监听用节流。</td>
+</tr>
+<tr>
+<td><code>immediate</code> 什么场景用？</td>
+<td>按钮防连点——第一次点立刻响应，后面的连点忽略，等 wait 后再解锁。</td>
+</tr>
+<tr>
+<td>为什么要 <code>fn.apply(this, args)</code>？</td>
+<td>保留调用时的 this 和参数，不然方法里 <code>this</code> 丢了。</td>
+</tr>
+<tr>
+<td>返回值和取消防抖？</td>
+<td>用闭包变量 <code>result</code> 存最近一次的结果；<code>cancel</code> 挂到返回的函数上。</td>
+</tr>
+<tr>
+<td>怎么保证最后一次一定执行？</td>
+<td>这就是现在的写法——每次触发都重置定时器，最后一次触发后 wait 时间到就执行。</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>常见错误</strong></p>
+<ul>
+<li>用箭头函数包 <code>debounced</code>，<code>this</code> 指向错。</li>
+<li>忘了 <code>clearTimeout</code>，导致执行多次。</li>
+<li><code>immediate</code> 模式下没有把 <code>timer</code> 置空，第二次点击永远不触发。</li>
+</ul>
+<hr />
+<h2 id="s4">3. 节流 throttle</h2>
+<p><strong>怎么问</strong>：手写节流，首尾都要触发。</p>
+<p><strong>参考实现（时间戳 + 定时器，lodash 思路）</strong></p>
+<pre><code class="language-js">function throttle(fn, wait = 300, options = { leading: true, trailing: true }) {
+  let last = 0;      // 上次执行时间
+  let timer = null;
+
+  return function throttled(...args) {
+    const now = Date.now();
+
+    // 第一次调用且不允许首次触发时，把 last 设成 now，避免一上来就执行
+    if (!last &amp;&amp; !options.leading) last = now;
+
+    const remaining = wait - (now - last);
+
+    if (remaining &lt;= 0 || remaining &gt; wait) {
+      // 到点了（或者系统时间被改过），立即执行
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      last = now;
+      fn.apply(this, args);
+    } else if (!timer &amp;&amp; options.trailing) {
+      // 没到点，但尾触发要执行：安排一次
+      timer = setTimeout(() =&gt; {
+        last = options.leading ? Date.now() : 0;
+        timer = null;
+        fn.apply(this, args);
+      }, remaining);
+    }
+  };
+}
+</code></pre>
+<p><strong>两种简化版（面试先说这两种再说优化）</strong></p>
+<pre><code class="language-js">// 时间戳版：首次立即执行，最后一次可能不执行
+function throttleByTime(fn, wait) {
+  let last = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - last &gt;= wait) {
+      last = now;
+      fn.apply(this, args);
+    }
+  };
+}
+
+// 定时器版：首次延迟执行，最后一次一定执行
+function throttleByTimer(fn, wait) {
+  let timer = null;
+  return function (...args) {
+    if (timer) return;
+    timer = setTimeout(() =&gt; {
+      timer = null;
+      fn.apply(this, args);
+    }, wait);
+  };
+}
+</code></pre>
+<p><strong>面试时怎么讲</strong></p>
+<blockquote>
+<p>时间戳版能保证首次立即执行、但最后一次可能丢；定时器版保证最后一次执行、但首次要等。要首尾都触发，就把两者合起来：没到间隔时间时用定时器补一次尾触发，到间隔了就立即执行。lodash 的 throttle 就是这套。</p>
+</blockquote>
+<p><strong>追问</strong></p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>追问</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>滚动监听用哪个？</td>
+<td>节流，固定频率更新答题卡高亮或吸顶状态，不然每帧都跑太重。</td>
+</tr>
+<tr>
+<td>为什么不用 <code>requestAnimationFrame</code>？</td>
+<td>只关心渲染帧的可以用 rAF，比 setTimeout 准；但业务上要固定间隔（比如 200ms 一次请求）还是节流。</td>
+</tr>
+<tr>
+<td>节流能取消防抖吗？</td>
+<td>可以给返回函数补 <code>cancel</code>，跟防抖一样清定时器。</td>
+</tr>
+<tr>
+<td>和防抖一起用？</td>
+<td>少见。搜索场景是防抖，滚动是节流，一般二选一。</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="s5">4. Promise 并发控制</h2>
+<p><strong>怎么问</strong>：有一批异步任务，控制同时最多跑 3 个，全部完成返回结果，保持顺序。</p>
+<p><strong>参考实现</strong></p>
+<pre><code class="language-js">/**
+ * @param tasks 任务数组，每项是返回 Promise 的函数
+ * @param limit 最大并发数
+ */
+function limitRun(tasks, limit = 3) {
+  return new Promise((resolve, reject) =&gt; {
+    const results = new Array(tasks.length);
+    let index = 0;      // 下一个要取的任务
+    let running = 0;    // 正在跑的数量
+    let finished = 0;   // 已完成的数量
+
+    if (tasks.length === 0) return resolve(results);
+
+    const next = () =&gt; {
+      // 有空位就补任务，直到并发满或者任务取完
+      while (running &lt; limit &amp;&amp; index &lt; tasks.length) {
+        const i = index++;
+        running++;
+
+        Promise.resolve()
+          .then(() =&gt; tasks[i]())     // 包一层，兼容同步任务
+          .then(
+            (res) =&gt; {
+              results[i] = res;       // 按原始下标存，保证顺序
+              running--;
+              finished++;
+              if (finished === tasks.length) resolve(results);
+              else next();            // 空出一个位置，继续补
+            },
+            (err) =&gt; reject(err)      // 任意一个失败就整体失败
+          );
+      }
+    };
+
+    next();
+  });
+}
+</code></pre>
+<p><strong>用法</strong></p>
+<pre><code class="language-js">const tasks = urls.map(url =&gt; () =&gt; fetch(url).then(r =&gt; r.json()));
+limitRun(tasks, 3).then(results =&gt; console.log(results));
+</code></pre>
+<p><strong>如果要求&quot;一个失败不影响其他&quot;</strong></p>
+<pre><code class="language-js">function limitRunSettled(tasks, limit = 3) {
+  return new Promise((resolve) =&gt; {
+    const results = new Array(tasks.length);
+    let index = 0, running = 0, finished = 0;
+    if (!tasks.length) return resolve(results);
+
+    const next = () =&gt; {
+      while (running &lt; limit &amp;&amp; index &lt; tasks.length) {
+        const i = index++;
+        running++;
+        Promise.resolve()
+          .then(() =&gt; tasks[i]())
+          .then(
+            (res) =&gt; { results[i] = { status: 'fulfilled', value: res }; },
+            (err) =&gt; { results[i] = { status: 'rejected', reason: err }; }
+          )
+          .finally(() =&gt; {
+            running--; finished++;
+            if (finished === tasks.length) resolve(results);
+            else next();
+          });
+      }
+    };
+    next();
+  });
+}
+</code></pre>
+<p><strong>面试时怎么讲</strong></p>
+<blockquote>
+<p>核心是一个&quot;取任务—占坑—完成回填&quot;的循环：维护正在运行的数量，没到上限就继续从队列里取；每个任务完成后计数减一，再补一个；结果按原始下标存，所以顺序不会乱。整个过程包在一个 Promise 里，完成数等于总数时 resolve。</p>
+</blockquote>
+<p><strong>追问</strong></p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>追问</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>为什么 <code>results[i] = res</code> 能保序？</td>
+<td>依赖的是闭包里的 <code>i</code>（用 <code>const</code> 声明在循环体内），每个任务记住自己的下标，回填时不受完成先后影响。</td>
+</tr>
+<tr>
+<td>一个失败要不要中断？</td>
+<td>看业务。批量上传要 <strong>allSettled</strong> 语义（失败记下来继续）；批量提交可能要 <strong>fail-fast</strong>（有一个失败就停）。两种都实现过。</td>
+</tr>
+<tr>
+<td>limit 能动态改吗？</td>
+<td>能，把 limit 放外部变量，next 每次读最新的值就行；但要注意边界（不能小于 1）。</td>
+</tr>
+<tr>
+<td>和 <code>Promise.all</code> 的区别？</td>
+<td><code>all</code> 是一次性全发出去，只是等待；并发控制是限制同时在跑的数量，避免把接口打挂。</td>
+</tr>
+<tr>
+<td>任务本身是同步函数怎么办？</td>
+<td><code>Promise.resolve().then(() =&gt; task())</code> 包一层，同步抛错也能进 reject。</td>
+</tr>
+<tr>
+<td>怎么加进度？</td>
+<td>加一个 onProgress 回调，finished 变化时调一下。</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>常见错误</strong></p>
+<ul>
+<li>用 <code>for</code> 循环里 <code>await</code> 一个接一个，变成串行，完全没有并发。</li>
+<li>用 <code>forEach</code> 里 <code>await</code>，外层根本不等待。</li>
+<li>结果用 <code>push</code>，完成顺序和任务顺序不一致。</li>
+</ul>
+<hr />
+<h2 id="s6">5. 数组去重</h2>
+<p><strong>怎么问</strong>：数组去重有几种写法？对象数组怎么去重？</p>
+<p><strong>基本类型</strong></p>
+<pre><code class="language-js">// 1. Set（最简洁，O(n)）
+const unique1 = arr =&gt; [...new Set(arr)];
+
+// 2. filter + indexOf（O(n²)，NaN 会漏）
+const unique2 = arr =&gt; arr.filter((item, i) =&gt; arr.indexOf(item) === i);
+
+// 3. reduce + includes（同样 O(n²)，NaN 会漏）
+const unique3 = arr =&gt; arr.reduce((acc, cur) =&gt; acc.includes(cur) ? acc : [...acc, cur], []);
+
+// 4. Map（SameValueZero，NaN 也正确）
+const unique4 = arr =&gt; {
+  const map = new Map();
+  arr.forEach(item =&gt; map.set(item, item));
+  return [...map.values()];
+};
+</code></pre>
+<p><strong>对象数组按字段去重</strong></p>
+<pre><code class="language-js">function uniqueBy(arr, keyFn = item =&gt; item.id) {
+  const map = new Map();
+  arr.forEach(item =&gt; {
+    const key = keyFn(item);
+    if (!map.has(key)) map.set(key, item);  // 保留第一次出现的
+  });
+  return [...map.values()];
+}
+
+// 用法
+uniqueBy(list, item =&gt; item.id);
+uniqueBy(list, item =&gt; `${item.orgId}-${item.type}`); // 多字段
+</code></pre>
+<p><strong>面试时怎么讲</strong></p>
+<blockquote>
+<p>基本类型首选 <code>Set</code>，一行代码、O(n)。要兼容老环境用 <code>filter + indexOf</code>，但它是 O(n²)，而且 <code>NaN !== NaN</code> 会把 NaN 全留下。对象数组不能直接 Set，因为引用不同，得按业务字段建 Map 去重，通常保留第一次出现的，多字段就拼成字符串当 key。</p>
+</blockquote>
+<p><strong>追问</strong></p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>追问</th>
+<th>答</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Set 为什么能去重？</td>
+<td>内部用 SameValueZero 比较，<code>NaN</code> 也相等，所以能去重；对象按引用比，两个内容一样的对象仍算不同。</td>
+</tr>
+<tr>
+<td>对象数组为什么 Set 不行？</td>
+<td>Set 比的是引用，两个 <code>{id:1}</code> 不是同一个对象。</td>
+</tr>
+<tr>
+<td>保留最后一次出现的怎么写？</td>
+<td>Map 的 set 直接覆盖就行——先遍历、后出现覆盖前面。</td>
+</tr>
+<tr>
+<td>大数组性能？</td>
+<td>基本类型 Set 是 O(n)；<code>indexOf</code> 是 O(n²)，几万条就明显慢。</td>
+</tr>
+<tr>
+<td>怎么保持原数组不变？</td>
+<td>上面所有实现都返回新数组，没动原数组。</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>常见错误</strong></p>
+<ul>
+<li>以为 <code>[...new Set(objArr)]</code> 能把内容相同的对象去掉（去不掉）。</li>
+<li><code>filter + indexOf</code> 处理含 NaN 的数组，结果不对。</li>
+<li>多字段 key 用 <code>+</code> 拼接，<code>1-23</code> 和 <code>12-3</code> 撞了，要用分隔符。</li>
+</ul>
+<hr />
+<h2 id="s7">6. 顺手也要会（短题）</h2>
+<h3 id="s8">6.1 手写 call / apply / bind</h3>
+<pre><code class="language-js">Function.prototype.myCall = function (ctx, ...args) {
+  ctx = ctx == null ? globalThis : Object(ctx);
+  const key = Symbol('fn');
+  ctx[key] = this;
+  const res = ctx[key](...args);
+  delete ctx[key];
+  return res;
+};
+
+Function.prototype.myApply = function (ctx, args = []) {
+  return this.myCall(ctx, ...args);
+};
+
+Function.prototype.myBind = function (ctx, ...args) {
+  const fn = this;
+  return function bound(...rest) {
+    // new 调用时 this 要指向新对象，而不是绑定的 ctx
+    return fn.apply(this instanceof bound ? this : ctx, [...args, ...rest]);
+  };
+};
+</code></pre>
+<h3 id="s8">6.2 手写 new</h3>
+<pre><code class="language-js">function myNew(Ctor, ...args) {
+  const obj = Object.create(Ctor.prototype);
+  const res = Ctor.apply(obj, args);
+  return res &amp;&amp; (typeof res === 'object' || typeof res === 'function') ? res : obj;
+}
+</code></pre>
+<h3 id="s8">6.3 手写 instanceof</h3>
+<pre><code class="language-js">function myInstanceof(obj, Ctor) {
+  let proto = Object.getPrototypeOf(obj);
+  while (proto) {
+    if (proto === Ctor.prototype) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
+}
+</code></pre>
+<h3 id="s8">6.4 数组扁平化</h3>
+<pre><code class="language-js">function flatten(arr, depth = Infinity) {
+  if (depth &lt;= 0) return arr.slice();
+  return arr.reduce((acc, cur) =&gt;
+    acc.concat(Array.isArray(cur) ? flatten(cur, depth - 1) : cur), []);
+}
+// 或者：arr.flat(Infinity)
+</code></pre>
+<h3 id="s8">6.5 手写 Promise.all</h3>
+<pre><code class="language-js">function myAll(list) {
+  return new Promise((resolve, reject) =&gt; {
+    const arr = Array.from(list);
+    const results = new Array(arr.length);
+    let count = 0;
+    if (!arr.length) return resolve(results);
+
+    arr.forEach((p, i) =&gt; {
+      Promise.resolve(p).then(
+        (v) =&gt; {
+          results[i] = v;
+          if (++count === arr.length) resolve(results);
+        },
+        reject
+      );
+    });
+  });
+}
+</code></pre>
+<h3 id="s8">6.6 柯里化与组合</h3>
+<pre><code class="language-js">function curry(fn) {
+  return function curried(...args) {
+    if (args.length &gt;= fn.length) return fn.apply(this, args);
+    return (...rest) =&gt; curried.apply(this, [...args, ...rest]);
+  };
+}
+
+const compose = (...fns) =&gt; x =&gt; fns.reduceRight((v, f) =&gt; f(v), x);
+const pipe = (...fns) =&gt; x =&gt; fns.reduce((v, f) =&gt; f(v), x);
+</code></pre>
+<h3 id="s8">6.7 发布订阅</h3>
+<pre><code class="language-js">class EventEmitter {
+  constructor() { this.events = new Map(); }
+  on(name, fn) {
+    if (!this.events.has(name)) this.events.set(name, []);
+    this.events.get(name).push(fn);
+    return this;
+  }
+  off(name, fn) {
+    const list = this.events.get(name);
+    if (list) this.events.set(name, list.filter(f =&gt; f !== fn));
+    return this;
+  }
+  once(name, fn) {
+    const wrapper = (...args) =&gt; { fn(...args); this.off(name, wrapper); };
+    return this.on(name, wrapper);
+  }
+  emit(name, ...args) {
+    (this.events.get(name) || []).slice().forEach(fn =&gt; fn(...args));
+    return this;
+  }
+}
+</code></pre>
+<h3 id="s8">6.8 LRU 缓存（Map 能保插入顺序）</h3>
+<pre><code class="language-js">class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.map = new Map();
+  }
+  get(key) {
+    if (!this.map.has(key)) return -1;
+    const val = this.map.get(key);
+    this.map.delete(key);
+    this.map.set(key, val);   // 重新插入 = 移到最新
+    return val;
+  }
+  put(key, val) {
+    if (this.map.has(key)) this.map.delete(key);
+    this.map.set(key, val);
+    if (this.map.size &gt; this.capacity) {
+      this.map.delete(this.map.keys().next().value); // 删最旧的
+    }
+  }
+}
+</code></pre>
+<h3 id="s8">6.9 异步重试</h3>
+<pre><code class="language-js">function retry(fn, times = 3, delay = 500) {
+  return new Promise((resolve, reject) =&gt; {
+    const attempt = (left) =&gt; {
+      Promise.resolve()
+        .then(fn)
+        .then(resolve)
+        .catch(err =&gt; {
+          if (left &lt;= 1) return reject(err);
+          const wait = delay * (times - left + 1); // 递增等待
+          setTimeout(() =&gt; attempt(left - 1), wait);
+        });
+    };
+    attempt(times);
+  });
+}
+</code></pre>
+<h3 id="s8">6.10 数字千分位</h3>
+<pre><code class="language-js">const thousand = (num) =&gt; String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+// 带小数的版本
+function formatMoney(num, decimals = 2) {
+  const [int, dec] = Number(num).toFixed(decimals).split('.');
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dec ? '.' + dec : '');
+}
+</code></pre>
+<hr />
+<h2 id="s8">7. 写题时的加分细节</h2>
+<ul>
+<li><strong>主动说复杂度</strong>：去重 Set 是 O(n)，<code>indexOf</code> 是 O(n²)；并发控制是 O(n) 任务本身的开销。</li>
+<li><strong>主动说边界</strong>：空数组、同步任务、任务抛错、<code>this</code> 丢失。</li>
+<li><strong>能挂到项目上就挂</strong>：防抖说搜索、节流说滚动、深拷贝说缓存快照、并发控制说批量请求。</li>
+<li><strong>别背实现</strong>：手写题考的是&quot;你能不能想清楚&quot;，卡住时说思路，比默写完整代码得分高。</li>
+</ul>
+<hr />
+<p><em>需要哪题我拆得更细（比如一步步带你写），说一声。</em></p>
+
+</article>
+<nav class="pn-nav"><a class="pn" href="./timu.html"><span>上一篇</span><b>面试题与答案 v3</b></a></nav>
+<footer class="foot">
+  <span>手写题</span>
+  <span>生成于 2026-10-23</span>
+</footer>
+</main>
+
+<button class="totop" id="toTop" type="button" aria-label="回到顶部">↑</button>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>伍裕丰 - 在线简历（选择岗位方向）</title>
+<style>
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 0; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+    color: #2b2b2b;
+    font-size: 9pt;
+    line-height: 1.58;
+    padding: 9mm 12mm 7mm 12mm;
+  }
+  .header { border-bottom: 2.2px solid #1a4e7a; padding-bottom: 6px; margin-bottom: 9px; }
+  .name { font-size: 20pt; font-weight: 700; color: #1a4e7a; letter-spacing: 2px; }
+  .sub { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 3px; font-size: 8.5pt; color: #444; }
+  .intent { display: inline-block; background: #1a4e7a; color: #fff; padding: 1px 8px; border-radius: 2px; font-size: 8pt; margin-top: 4px; }
+
+  .sec { margin-top: 8px; }
+  .sec-title {
+    font-size: 10.5pt; font-weight: 700; color: #1a4e7a;
+    border-left: 4px solid #1a4e7a; padding-left: 6px; margin-bottom: 5px;
+  }
+  .skills { display: block; }
+  .skill-item { width: 100%; padding: 2px 0; }
+  .skill-item b { color: #1a4e7a; }
+
+  .job { margin-bottom: 7px; }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .job-title { font-size: 9.5pt; font-weight: 700; }
+  .job-title .co { color: #1a4e7a; }
+  .job-title .role { color: #666; font-weight: 400; font-size: 8.5pt; }
+  .job-time { font-size: 8pt; color: #666; white-space: nowrap; }
+  .job ul { margin-left: 14px; }
+  .job li { margin: 2px 0; }
+
+  .proj { margin-bottom: 7px; page-break-inside: avoid; }
+  .proj-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .proj-title { font-size: 9.5pt; font-weight: 700; }
+  .proj-time { font-size: 8pt; color: #666; white-space: nowrap; }
+  .proj-tech { font-size: 8pt; color: #555; margin: 0.5px 0; }
+  .proj-tech b { color: #1a4e7a; }
+  .proj ul { margin-left: 14px; }
+  .proj li { margin: 2px 0; }
+
+  .edu { display: flex; justify-content: space-between; }
+  .eval li { margin: 2px 0; }
+  .eval { margin-left: 14px; }
+
+  /* ===== 屏幕层（2026-10 由 DSH 添加；打印层保持原样） ===== */
+  @media screen {
+    body { font-size: 15px; line-height: 1.72; padding: 0 0 48px; background: #f4f6f8; color: #2b2b2b; }
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      max-width: 820px; margin: 0 auto; padding: 12px 0 10px; font-size: 13px; color: #5b6670;
+    }
+    .toolbar .t-name { font-weight: 700; color: #1a4e7a; letter-spacing: .5px; }
+    .toolbar .t-note { color: #8a939b; font-weight: 400; margin-left: 6px; }
+    .toolbar a {
+      display: inline-block; padding: 6px 13px; margin-left: 8px; border-radius: 4px; text-decoration: none;
+      border: 1px solid #d3d9de; background: #fff; color: #1a4e7a; white-space: nowrap;
+    }
+    .toolbar a.primary { background: #1a4e7a; border-color: #1a4e7a; color: #fff; }
+    .page {
+      width: 100%; max-width: 820px; box-sizing: border-box; margin: 0 auto; padding: 34px 46px 40px;
+      background: #fff; border-radius: 8px; box-shadow: 0 2px 16px rgba(24, 43, 61, .08);
+    }
+    .page .name { font-size: 30px; }
+    .page .sec-title { font-size: 16.5px; margin-bottom: 8px; }
+    .page .job-title, .page .proj-title { font-size: 15px; }
+    .page .sub, .page .job-time, .page .proj-time, .page .proj-tech { font-size: 13px; }
+    .page .intent { font-size: 12.5px; padding: 2px 10px; }
+    .page .sec { margin-top: 18px; }
+    .page .job, .page .proj { margin-bottom: 14px; }
+    .page .job li, .page .proj li, .page .eval li { margin: 4px 0; }
+    .page .job ul, .page .proj ul, .page .eval { margin-left: 20px; }
+    .toolbar a:hover { border-color: #1a4e7a; }
+  }
+  @media screen and (max-width: 640px) {
+    body { padding: 0 0 32px; }
+    .toolbar { padding: 10px 14px 8px; }
+    /* 宽度用 calc 扣掉左右边距，而不是靠 margin —— margin 不计入 width:100%，会横向溢出 10px（2026-10-09 实测抓到） */
+    .page { width: calc(100% - 20px); max-width: none; margin: 0 auto; padding: 20px 16px 26px; border-radius: 6px; }
+    .page .name { font-size: 24px; }
+    .page .sec-title { font-size: 16px; }
+    .page { font-size: 14.5px; }
+    .page .sub { gap: 2px 10px; }
+    /* 窄屏把「标题 + 时间」拆成上下两行：左右对挤会把公司名/职位捏碎（2026-10-09 移动端实测抓到） */
+    .page .job-head, .page .proj-head, .page .edu { display: block; }
+    .page .job-time, .page .proj-time { display: block; margin-top: 1px; }
+    .page .job-title .role { display: block; font-size: 12.5px; margin-top: 1px; }
+  }
+  @media print {
+    .toolbar { display: none !important; }
+    .page { max-width: none; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+  }
+
+  /* ===== 多岗位支持（2026-10-09 追加）===== */
+  /* 注：曾试过在 @media print 里改 body padding 来把前端版从 3 页压回 2 页 —— 实测无效
+     （原样式里的 body padding 仍胜出，浏览器算出来还是 9mm/12mm/7mm），已删除该规则。
+     最终办法是**减内容**（技能栏 8→7 条、自我评价 5→4 条），文件末尾有说明。 */
+  @media screen {
+    .toolbar .nav a { border-color: transparent; background: transparent; color: #5b6670; padding: 6px 8px; }
+    .toolbar .nav a:hover { color: #1a4e7a; text-decoration: underline; }
+    .pick { max-width: 820px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 34px 46px 40px; box-shadow: 0 2px 16px rgba(24,43,61,.08); }
+    .pick h1 { font-size: 26px; color: #1a4e7a; letter-spacing: 1px; }
+    .pick .lead { color: #5b6670; font-size: 14px; margin-top: 6px; }
+    .pick .meta { color: #8a939b; font-size: 12.5px; margin-top: 4px; }
+    .pick .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 6px; }
+    .pick .card { display: block; border: 1px solid #dbe2e8; border-radius: 8px; padding: 18px 20px 18px; text-decoration: none; color: inherit; transition: border-color .15s, box-shadow .15s; }
+    .pick .card:hover { border-color: #1a4e7a; box-shadow: 0 4px 14px rgba(26,78,122,.12); }
+    .pick .card .role { font-size: 17px; font-weight: 700; color: #1a4e7a; }
+    .pick .card .hint { font-size: 13px; color: #5b6670; margin-top: 8px; line-height: 1.7; }
+    .pick .card .files { font-size: 12.5px; color: #8a939b; margin-top: 12px; }
+    .pick .foot { border-top: 1px solid #eef1f4; margin-top: 26px; padding-top: 16px; font-size: 12.5px; color: #8a939b; line-height: 1.9; }
+  }
+  @media screen and (max-width: 640px) {
+    .pick { width: calc(100% - 20px); margin: 0 auto; padding: 20px 16px 26px; border-radius: 6px; }
+    .pick h1 { font-size: 21px; }
+    .pick .cards { grid-template-columns: 1fr; gap: 12px; }
+  }
+  @media print { .pick .cards { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div><span class="t-name">伍裕丰 · 在线简历 <span class="t-note">按岗位查看</span></span></div>
+  <div class="nav"></div>
+</div>
+
+<div class="pick">
+  <h1>伍裕丰 · 在线简历</h1>
+  <div class="lead">前端开发 · 全栈开发（Node.js / Vue / AI 应用）</div>
+  <div class="meta">男 · 28 岁 · 6 年+ 开发经验 · 全日制本科（电子信息工程）· 成都工业学院</div>
+
+  <div class="cards">
+    <a class="card" href="frontend/">
+      <div class="role">Web 前端开发工程师</div>
+      <div class="hint">Vue2 / Vue3 · 组件化架构 · 多端（小程序 / H5 / PC）· 工程化与质量<br>6 年+ 前端经验，5+ 条产品线并行交付</div>
+      <div class="files">浏览在线简历 · 下载 PDF</div>
+    </a>
+    <a class="card" href="fullstack/">
+      <div class="role">全栈开发工程师</div>
+      <div class="hint">Node.js / Express · PostgreSQL / Redis · Docker · Vue3 · AI 应用<br>前端工程化 + 服务端与部署实践</div>
+      <div class="files">浏览在线简历 · 下载 PDF</div>
+    </a>
+  </div>
+
+  <div class="foot">
+    请选择对应岗位方向查看简历；两个版本为同一人的不同侧重点，联系方式一致。<br>
+    联系方式见各版本简历页 ｜ 邮箱：13036687205@163.com
+  </div>
+</div>
+
+</body>
+</html>

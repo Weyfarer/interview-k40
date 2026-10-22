@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
+<title>项目亮点（创联 + 瀚维） · 面试资料</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a4e7a'/%3E%3Ctext x='32' y='43' font-size='32' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E9%9D%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar">
+  <a class="back" href="./index.html">目录</a>
+  <div class="topbar-title">项目亮点（创联 + 瀚维）</div>
+  <button class="theme" id="themeBtn" type="button" aria-label="切换深浅色">◐</button>
+</header>
+<main class="wrap">
+  <details class="toc">
+    <summary>本页目录<span class="count">9</span></summary>
+    <ol>
+      <li><a href="#s1">1. 一体化考试平台（iep-web）</a></li>
+      <li><a href="#s2">2. 职证宝小程序（zzb-app）</a></li>
+      <li><a href="#s3">3. 志愿者双端（volunteer-admin-web2 + volunteer-app）</a></li>
+      <li><a href="#s4">4. 网销渠道端（seal-channel-web）</a></li>
+      <li><a href="#s5">5. 联合国官网（lhg）</a></li>
+      <li><a href="#s6">1. 成都市育龄妇女健康数据管理平台（fertileWoman-new）</a></li>
+      <li><a href="#s7">2. 报告查询 H5（webapp）</a></li>
+      <li><a href="#s8">3. 爱维星云 H5（bacc6_mobile）</a></li>
+      <li><a href="#s9">4. 爱维产品导航（productnav）</a></li>
+    </ol>
+  </details>
+<article class="doc">
+<h1>项目亮点（创联 + 瀚维）</h1>
+<blockquote>
+<p>只取源码或提交记录里能找到落点的；每段末尾标了证据。
+<code>[源码]</code> 能指到文件，<code>[提交]</code> 能指到提交记录，<code>[简历]</code> 只有简历口径、本机无代码。
+腾达、番茄按你说的跳过。</p>
+</blockquote>
+<hr />
+<h2 class="part">一、创联（2024.12–2026.08）</h2>
+<h2 id="s1">1. 一体化考试平台（iep-web）</h2>
+<p><strong>规模</strong>：Vue3 + TypeScript + Element Plus + Vite + Pinia + UnoCSS。366 个 ts 文件、47 个组件目录、我的提交 131 次。<code>[源码]</code></p>
+<p><strong>亮点 1：列表、查询、编辑三块都是配置驱动</strong></p>
+<blockquote>
+<p><strong>列表 <code>YTable</code>（493 行）</strong>：<code>columns</code> 数组描述列，<code>children</code> 递归做多级表头；列支持 <code>slot</code> 插槽、<code>render(h)</code> 函数、<code>show</code> 条件显示、<code>fixed/sortable/sortMethod/align/minWidth</code>。内置分页用 <code>defineModel('pageNo'/'pageSize')</code> 双向绑定，<code>configFlag</code> 控多选/序号/展开行/边框；可选 <code>dragRow</code> 用 sortablejs 拖拽排序；表头右键弹「导出为 excel」（<code>eltable-as-xlsx</code>，可配排除列，3 秒后自动关）；<code>autoHeight</code> 按视口算高度。</p>
+<p><strong>查询区 <code>YForm</code>（556 行）</strong>：<code>searchForm</code> 数组支持 13 种字段类型（Input、InputNumber、InputPwd、Textarea、Select、Cascader、Radio、RadioButton、Checkbox、Date、Daterange、Time、DateTime、Datetimerange），也能直接给任意 slot；<code>isShow</code> 做字段联动（数组看长度、其他看真假）；超过 3 个字段自动折叠，展开/收起时 <code>dispatchEvent(new Event('resize'))</code> 让表格重算高度；<code>search()</code> 把空串转 null、pageNo 重置为 1、pageSize 保留，配了 <code>formConfig.rules</code> 才走校验。</p>
+<p><strong>编辑表单 <code>Form</code></strong>：schema 驱动的独立组件（TSX + <code>componentMap</code> + 栅格），和 YForm 不是一回事——YForm 只管查询区。</p>
+<p>所以一个业务模块 = <code>index.vue</code> + <code>config.ts</code> + <code>api</code>。<code>config.ts</code> 里 <code>searchForm()</code> 是工厂函数（把字典选项传进去），<code>columns</code> 里用 <code>h()</code> 写渲染，字典翻译、时间格式化都在配置里做。阅卷计划页就是这么用的：<code>config.searchForm({ EXAM_PLAN_TYPE_NEW: getIntDictOptions(...) })</code>。</p>
+<p><strong>怎么讲</strong>：这套东西不是为考试平台新写的，是育龄平台 <code>commonTable</code> 那套思路带过来的，到这边做成了三个通用组件。</p>
+</blockquote>
+<p><strong>这套封装的问题和改法（面试可直接说）</strong></p>
+<blockquote>
+<p>被问&quot;这套封装有什么不足&quot;或&quot;如果重写你怎么改&quot;时，挑两三条说，不用全倒。</p>
+</blockquote>
+<ol>
+<li>
+<p><strong>表格高度是全局找元素算的。</strong> <code>autoHeight</code> 里用 <code>document.querySelector('.y-table')</code>，一页放两个表格就测错，resize 监听也没解绑。重写的话让组件接一个容器 ref，或者用 <code>ResizeObserver</code> 只盯自己这块，卸载时断开。</p>
+</li>
+<li>
+<p><strong>斑马纹关不掉。</strong> <code>:stripe=&quot;configFlag.stripe || true&quot;</code> 恒为 true。重写把默认值放进 props 的 <code>default</code>，不要用 <code>||</code> 兜底。</p>
+</li>
+<li>
+<p><strong>类型声明是假的。</strong> <code>type: Number || String</code> 实际恒等于 <code>Number</code>。重写用 <code>[Number, String]</code>。</p>
+</li>
+<li>
+<p><strong><code>get-table-ref</code> 拿不到东西。</strong> 在 setup 阶段就 emit，外面收到的永远是 null。重写改成 <code>onMounted</code> 之后再 emit，或者直接用 <code>defineExpose</code>。</p>
+</li>
+<li>
+<p><strong><code>YForm.reset()</code> 把字段全置 null，不是回默认值。</strong> 所以阅卷计划页要手动把 <code>gradingStatus</code> 改回 1。重写让组件记一份初始值快照，reset 时还原，并且只清查询字段。</p>
+</li>
+<li>
+<p><strong><code>validate()</code> 没暴露、<code>getFormRef</code> 也是 null。</strong> 重写统一走 <code>defineExpose({ validate, reset, clear })</code>，父组件要用什么就暴露什么。</p>
+</li>
+<li>
+<p><strong>&quot;展开筛选&quot;按钮只在挂载后算一次。</strong> 窗口 resize 后不重算，该隐藏的时候还显示。重写监听 resize 或用 <code>ResizeObserver</code> 重算。</p>
+</li>
+<li>
+<p><strong>权限指令没有 <code>updated</code>。</strong> <code>v-hasPermi</code> 只在挂载时执行一次，权限变了不会重算。重写补 <code>updated</code> 钩子，或者用响应式判断包一层。</p>
+</li>
+<li>
+<p><strong>翻页里留了 <code>console.log</code>。</strong> 重写接 ESLint 的 <code>no-console</code>，别靠自觉。</p>
+</li>
+</ol>
+<p><strong>封装思想（面试问&quot;讲讲你的组件化&quot;时，两分钟版）</strong></p>
+<blockquote>
+<p>这套东西解决的不是&quot;表格怎么封&quot;，是&quot;列表页怎么批量生产&quot;。后台的列表页其实都是同一个形态——上面查询、中间按钮、下面表格加页码。我把这个形态固定成组件，页面里只剩三样：<code>columns</code>、<code>searchForm</code>、接口。用起来很直接：查询区写一个数组，表格写一个 <code>columns</code>，分页 <code>v-model</code> 绑上 <code>pageNo</code>/<code>pageSize</code>，请求挂两个事件就完了。阅卷计划页一共 233 行，一行 <code>el-table-column</code> 都没写，列全在 154 行的 config 里，加新页面基本就是照抄一份配置改字段。</p>
+<p>三个组件不在一个抽象层次上。<code>YForm</code>、<code>YTable</code> 是约定式组件，配置给的是参数——&quot;这列叫什么、多宽、能不能排序&quot;；<code>Form</code> 是 schema 渲染器，配置给的是元数据——&quot;这个字段用什么组件、怎么校验&quot;，由 <code>componentMap</code> 解释执行。查询区形态稳定，用约定就够了；编辑表单字段千变万化，才需要解释器。</p>
+<p>关键在逃生口。<code>columns</code> 有 <code>slot</code> 和 <code>render(h)</code>，<code>YForm</code> 有 <code>item.slot</code> 和自定义按钮，配置吃不下就退回手写。很多自研配置化表格死在&quot;多一个特殊列就加一个配置项&quot;上，最后成了半成品低代码，我们没往那条路走。</p>
+<p>它也有代价：跨组件靠隐式副作用——搜索时自动改 pageNo、折叠时 dispatch resize 让表格重算高度，效率高，但读代码看不出来；全局 <code>querySelector</code> 找表格、resize 监听不解绑，都是这个思路的副作用。如果重写，第一件事是把这些隐式协作换成显式的接口约定。</p>
+</blockquote>
+<p><strong>三十秒版（对方随口一问时用）</strong></p>
+<blockquote>
+<p>简单说，就是把&quot;列表页&quot;做成模板：页面只填列配置、查询项和接口，表格结构一行不用写，分页、空态、折叠组件自带；配置吃不下就留插槽手写，不硬堆配置项做成低代码。代价是组件间靠隐式副作用通信，重写会先换成显式接口。</p>
+</blockquote>
+<p><strong>亮点 2：阅卷主链路，题型组件动态渲染</strong></p>
+<blockquote>
+<p><code>views/grading</code> 拆成 plan（计划）、record（记录）、task（任务）、gradingPaper（阅卷卷面）。阅卷卷面 <code>topic.vue</code> 用 <code>&lt;component :is&gt;</code> + 题型码映射到六种题目组件（单选、多选、填空、简答、案例、组合），支持仲裁标记、主观题打分。题型配置集中在 <code>QUESTION_CONFIG</code>，加题型只改映射。</p>
+<p><strong>怎么讲</strong>：阅卷这块难点不在页面，在状态——从计划到成绩中间环节多，我先把状态图理出来再对着接口字段一个个对。</p>
+</blockquote>
+<p><strong>亮点 3：试卷水印</strong></p>
+<blockquote>
+<p><code>hooks/web/useWatermark.ts</code>：canvas 画 300×240 的平铺水印，旋转约 30 度、<code>rgba(0,0,0,0.15)</code>、<code>pointer-events: none</code>、z-index 置顶；窗口 resize 时重建，组件卸载时 <code>clear()</code> 移除节点和监听。</p>
+<p><strong>怎么讲</strong>：防不住专业截图，作用是追溯和威慑，这点跟产品说过。</p>
+</blockquote>
+<p><strong>亮点 4：导出 PDF</strong></p>
+<blockquote>
+<p><code>utils/htmlToPDF.ts</code>：html2canvas + jsPDF。先按 190×277 的纸面比例算出每页像素高度，再逐个检查元素有没有跨页，跨页就在节点后面插一个空白占位块，避免表格行被切断；渲染倍率 1.3。</p>
+<p><strong>配套踩坑</strong>：富文本里的 <code>&lt;br&gt;</code> 导出后换行乱、标签漏出来，导出前要洗一遍内容。<code>[提交 2025-07-08]</code></p>
+</blockquote>
+<p><strong>亮点 5：权限和字典</strong></p>
+<blockquote>
+<p><code>permission.ts</code>：白名单 + token 判断 + 后端下发菜单 <code>generateRoutes()</code> 后逐个 <code>addRoute</code>，跳转带 redirect 参数还原（含 query 解析）；字典用 Pinia 全局拉一次、缓存进 sessionStorage，避免每个页面都拉。</p>
+<p><strong>怎么讲</strong>：字典预加载和动态路由是两件最容易被忽略、但直接决定后台好不好用的事。</p>
+</blockquote>
+<p><strong>业务覆盖面</strong>：阅卷、监考中心（考试监控列表）、监管中心（评价机构、机构列表）、考试计划、成绩（人脸记录、成绩审核）、证书 PDF 导出。<code>[提交]</code></p>
+<hr />
+<h2 id="s2">2. 职证宝小程序（zzb-app）</h2>
+<p><strong>规模</strong>：uni-app + Vue3 + Pinia，提交 13 次。<code>[源码]</code></p>
+<p><strong>亮点 1：题型组件可扩展</strong></p>
+<blockquote>
+<p>题目组件 <code>question/index.vue</code> 按题型把作答部分拆成单选、多选、判断三个子组件，统一 <code>v-model</code>，外层只管取题和切题。加题型 = 加一个子组件 + 映射一行。</p>
+</blockquote>
+<p><strong>亮点 2：答题卡</strong></p>
+<blockquote>
+<p>按题型分组渲染，每组显示&quot;每题几分、共几题&quot;，格子按作答状态上色，点格子按题目 id 跳转；用 scroll-view 兜住长列表。</p>
+</blockquote>
+<p><strong>亮点 3：小程序和 H5 的双端兼容</strong></p>
+<blockquote>
+<p>全屏展示、样式隔离、富文本渲染都单独处理过。<code>[提交 2025-01-16 兼容小程序、h5全屏展示问题]</code> <code>[提交 2025-04-25 试题组件富文本渲染优化]</code></p>
+</blockquote>
+<p><strong>亮点 4：下一题逻辑</strong></p>
+<blockquote>
+<p>优先判断是否存在下一个认定点，没有再走下一题。<code>[提交 2025-01-16]</code></p>
+</blockquote>
+<hr />
+<h2 id="s3">3. 志愿者双端（volunteer-admin-web2 + volunteer-app）</h2>
+<p><strong>规模</strong>：后台 Vue3 + Ant Design Vue + Pinia（vben 体系），提交 36 次；小程序原生开发。<code>[源码]</code></p>
+<p><strong>亮点 1：两种权限模式</strong></p>
+<blockquote>
+<p><code>permissionMode</code> 支持 BACK（后端下发菜单）和 ROUTE_MAPPING（前端路由映射）两种，<code>usePermission</code> 里统一处理；按钮级用 <code>Authority</code> 组件包一层，没有权限就不渲染 slot。</p>
+</blockquote>
+<p><strong>亮点 2：动态路由 + 多标签页</strong></p>
+<blockquote>
+<p>守卫里拉用户信息、生成可访问路由并挂载，退出登录 <code>resetRouter</code>，避免换账号串菜单；多标签页状态单独一个 store 管。</p>
+</blockquote>
+<p><strong>亮点 3：双端并行</strong></p>
+<blockquote>
+<p>接口和数据模型先定，小程序和后台同时开发；志愿豆、注册成功弹窗这类业务在小程序侧。<code>[提交 2025-10-21 新增注册成功志愿豆弹窗]</code></p>
+</blockquote>
+<hr />
+<h2 id="s4">4. 网销渠道端（seal-channel-web）</h2>
+<p><strong>规模</strong>：vben 体系，商品管理分课程商品和服务商品。仓库总提交 2231，我的 32 次集中在商品模块治理。<code>[源码]</code></p>
+<p><strong>亮点 1：富文本安全</strong></p>
+<blockquote>
+<p>用 DOMPurify 净化商品详情 HTML，替换掉原来的 <code>eslint-disable</code> 注释——既解决了 XSS 风险，也不用再关规则。<code>[提交 2025-08-14]</code></p>
+</blockquote>
+<p><strong>亮点 2：TypeScript 类型治理</strong></p>
+<blockquote>
+<p>把课程/服务商品的列表、详情、预览页面的类型错误和 ESLint 警告清了一遍，顺手删了没用的 <code>ref</code>、调试用的 <code>console.log</code>，<code>console.log</code> 换成 <code>console.error</code>。<code>[提交 2025-08-15]</code></p>
+</blockquote>
+<p><strong>亮点 3：Vite 迁移类问题</strong></p>
+<blockquote>
+<p>修过 <code>require is not defined</code>（ESM 环境不能直接用 require）和预览页 <code>Cannot read properties of null (reading 'component')</code>。<code>[提交 2025-08-15]</code></p>
+</blockquote>
+<p><strong>说明</strong>：简历里&quot;6 个专题页&quot;是本机没有对应仓库的口径，面试按&quot;参与网销 WEB 端专题页开发&quot;说，别声称能演示。</p>
+<hr />
+<h2 id="s5">5. 联合国官网（lhg）</h2>
+<p><strong>规模</strong>：pnpm monorepo，<code>packages/</code> 下 entry、pc-app、mobile-app、shared 四个包；Vue3 + TS + Element Plus。我的提交 20 次。<code>[源码]</code></p>
+<p><strong>亮点 1：从 0 搭 PC 站</strong></p>
+<blockquote>
+<p>布局组件、首页、关于我们、详情页、移动端留资弹窗，都是这个项目里从零写的。<code>[提交 2025-08-21~08-28]</code></p>
+</blockquote>
+<p><strong>亮点 2：钉钉签名（这个最值得讲）</strong></p>
+<blockquote>
+<p>问题：生产环境钉钉接口缺 <code>sign</code>，通知发不出去。根因是 Web Crypto API 只在安全上下文（HTTPS/localhost）可用，生产走 HTTP 时算不出 HMAC-SHA256。方案：<code>shared/utils/dingtalk.ts</code> 里优先用原生 API，不可用时回退 crypto-js，纯前端解决，不用后端加接口。排查过程写成了 <code>DINGTALK_SIGN_SOLUTION.md</code>。<code>[源码+文档]</code></p>
+</blockquote>
+<p><strong>亮点 3：Monorepo 与部署</strong></p>
+<blockquote>
+<p>pnpm workspace 管依赖，shared 包放公共工具；Rainbond 部署配置、Dockerfile、<code>server.js</code>（SPA 托管）、<code>deploy.config.js</code> 都在仓库里；TS 自动导入、项目引用的问题也都记了文档。<code>[源码]</code></p>
+</blockquote>
+<p><strong>亮点 4：图片加载优化</strong></p>
+<blockquote>
+<p>单独做了懒加载验证页和优化。<code>[提交 2025-09-02]</code></p>
+</blockquote>
+<hr />
+<h2 class="part">二、瀚维（2020.11–2022.07）</h2>
+<h2 id="s6">1. 成都市育龄妇女健康数据管理平台（fertileWoman-new）</h2>
+<p><strong>规模</strong>：Vue2 + Element UI，23 家妇幼保健机构、500 多个基层机构。<code>[简历+源码]</code></p>
+<p><strong>亮点 1：配置化表格（这是你配置化思路的起点）</strong></p>
+<blockquote>
+<p><code>components/table/commonTable.vue</code>：config 控制多选列、序号列、斑马纹、边框、默认排序、表头样式、行样式、最大高度；列配置支持 prop/label/width/自定义渲染；留了 <code>prepend</code> 插槽给表头附加内容。页面里基本只剩配置和接口。</p>
+</blockquote>
+<p><strong>亮点 2：业务选择器组件化</strong></p>
+<blockquote>
+<p><code>MyCol</code>（栅格列）、<code>SelectWomen</code>（育龄妇女选择）、<code>CascaderOrgan</code>（机构级联）、<code>CascaderOther</code>、<code>CascaderDown</code>——把反复出现的&quot;选人、选机构&quot;做成组件，不用每个页面写一遍。</p>
+</blockquote>
+<p><strong>亮点 3：表格/图表自适应</strong></p>
+<blockquote>
+<p><code>Mixins/resize.js</code>：<code>debounce(100)</code> 监听窗口 resize，兼顾侧边栏折叠的 <code>transitionend</code>；用 keep-alive 时在 <code>activated/deactivated</code> 里重新绑定/解绑，避免缓存页面监听失效。这就是&quot;4:3 屏也能用&quot;的实现底子。</p>
+</blockquote>
+<p><strong>亮点 4：模块自动引入</strong></p>
+<blockquote>
+<p><code>api/index.js</code>、<code>store/index.js</code>、<code>icons/index.js</code> 都用 <code>require.context</code> 扫目录自动注册，加模块不用改入口文件。</p>
+</blockquote>
+<p><strong>注意</strong>：一键部署脚本在 webapp 那个项目里（见下），这个项目只有 <code>build/index.js</code> 的预览脚本，别把两件事说混。</p>
+<hr />
+<h2 id="s7">2. 报告查询 H5（webapp）</h2>
+<p><strong>规模</strong>：Vue2 + Vue CLI。页面二十多个：乳腺报告、宫颈报告、检查报告、预约详情、医生列表、科普列表/详情、风险评估、海报、消息、问卷。<code>[源码]</code></p>
+<p><strong>亮点 1：一键部署</strong></p>
+<blockquote>
+<p><code>deployConfig.js</code> 里配 SSH 地址、用户名、密码、服务器目录、SVN 路径、打包命令，<code>npm run deploy</code> 一条命令发到测试环境。这是真在用的东西。</p>
+</blockquote>
+<p><strong>亮点 2：报告页的截图与海报</strong></p>
+<blockquote>
+<p>报告是长页面，依赖里有 html2canvas，用于把报告内容转成图片做保存/分享海报。</p>
+</blockquote>
+<p><strong>亮点 3：多页面与协议流程</strong></p>
+<blockquote>
+<p>登录、协议（新用户协议、知情同意）、问卷、消息都独立成页，路由按业务分组。</p>
+</blockquote>
+<hr />
+<h2 id="s8">3. 爱维星云 H5（bacc6_mobile）</h2>
+<p><strong>规模</strong>：Vue3 + Vant 3，模块覆盖筛查全链路：预约、现场登记、排号、筛查计划/记录、随访、病例管理、知识库、质控、召回、任务反馈、报告。<code>[源码]</code></p>
+<p><strong>亮点 1：排号大屏</strong></p>
+<blockquote>
+<p><code>views/sortNumber</code>：左侧&quot;正在检查/已过号&quot;两个列表，右侧叫号；<code>setInterval</code> 轮询刷新，另有 <code>setTimeout</code> 处理单次延时刷新；带配置入口。</p>
+</blockquote>
+<p><strong>亮点 2：业务链路完整</strong></p>
+<blockquote>
+<p>不是零散页面，是&quot;预约→登记→排号→检查→随访→质控→召回&quot;一条线，能讲清每一环谁在用、数据从哪来。</p>
+</blockquote>
+<p><strong>亮点 3：较早用 Vue3</strong></p>
+<blockquote>
+<p>2022 年就用 Vue3 + setup 写业务，比大多数同期项目早。</p>
+</blockquote>
+<hr />
+<h2 id="s9">4. 爱维产品导航（productnav）</h2>
+<p><strong>规模</strong>：Vue3 + Vue CLI 5 beta + Vuex4 + Sass，80 个文件、6.1 MB。<code>[源码]</code></p>
+<p><strong>亮点 1：两屏翻屏</strong></p>
+<blockquote>
+<p><code>Home.vue</code> 用 wheel 事件切屏，<code>.first/.second</code> 两个 class 配 <code>transition: all 1s</code>，顶部固定 2.5rem。</p>
+</blockquote>
+<p><strong>亮点 2：数据大屏</strong></p>
+<blockquote>
+<p>5 个模块，接口 <code>GET /bacc/sysmanager/projectGuide</code>，字段覆盖总人数、省/市/县数量、乳腺和宫颈的筛查量、检出、治疗指标；页面里 <code>window.g.ApiUrl</code> 配接口域名。</p>
+</blockquote>
+<p><strong>亮点 3：产品矩阵</strong></p>
+<blockquote>
+<p>4 个板块、10 个产品、25 个跳转链接；星云产品有 7 个子模块浮层（数据管理、在线预约、现场登记、过程管理、排号大屏、报告查询、决策分析）。</p>
+</blockquote>
+<p><strong>亮点 4：手写 canvas 进度环</strong></p>
+<blockquote>
+<p><code>ProgressBar.vue</code> 用 canvas 画环，配 10 张环形精灵图做流光；props 接受 type/len/percent/color/text，没引图表库。</p>
+</blockquote>
+<p><strong>可以主动说的坑（加分项）</strong></p>
+<blockquote>
+<p>现在回头看有几处问题：宫颈那块标题复制成了&quot;乳腺筛查量&quot;、检出率用错了字段、rem 只在 mounted 算了一次、wheel 监听没移除。这些是我后来做 code review 才意识到的——讲出来比藏着强。</p>
+</blockquote>
+<hr />
+<h2 class="part">三、这些亮点怎么连成一条线</h2>
+<p><strong>同一条思路，两个阶段：</strong></p>
+<blockquote>
+<p>育龄平台的 <code>commonTable</code> 是&quot;配置化&quot;的起点（2021），到创联的 <code>YTable/YForm + config.ts</code> 变成了体系（2025）。同一条线讲下来，能说明你不是每次从零开始，而是把上一个项目的东西带过去继续改。</p>
+</blockquote>
+<p><strong>复杂业务：</strong></p>
+<blockquote>
+<p>考试平台的阅卷链路（计划→任务→卷面→成绩），题型组件动态渲染、水印、PDF 导出，三件事各有一个技术点，够讲十分钟。</p>
+</blockquote>
+<p><strong>工程化：</strong></p>
+<blockquote>
+<p>联合国官网的 monorepo（4 个包）+ 钉钉签名回退 + Rainbond 部署，是&quot;从 0 到上线&quot;的完整证据链。</p>
+</blockquote>
+<p><strong>多端：</strong></p>
+<blockquote>
+<p>职证宝（uni-app，小程序+H5）、志愿者（原生小程序 + 后台）、爱维星云（H5），三种形态都碰过。</p>
+</blockquote>
+<hr />
+<h2 class="part">四、证据索引（面试前自查）</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>亮点</th>
+<th>证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YTable / YForm / Form</td>
+<td><code>iep-web/src/components/YTable/index.vue</code>、<code>YForm/index.vue</code>、<code>Form/src/Form.vue</code></td>
+</tr>
+<tr>
+<td>列配置能力（多级表头/插槽/渲染）</td>
+<td><code>iep-web/src/components/YTable/columnItem.vue</code></td>
+</tr>
+<tr>
+<td>权限指令 v-hasPermi</td>
+<td><code>iep-web/src/directives/permission/hasPermi.ts</code></td>
+</tr>
+<tr>
+<td>阅卷计划页真实用法</td>
+<td><code>iep-web/src/views/grading/plan/index.vue</code></td>
+</tr>
+<tr>
+<td>模块 config.ts</td>
+<td><code>iep-web/src/views/grading/plan/config.ts</code></td>
+</tr>
+<tr>
+<td>题型动态组件</td>
+<td><code>iep-web/src/views/grading/task/gradingPaper/topic.vue</code></td>
+</tr>
+<tr>
+<td>水印</td>
+<td><code>iep-web/src/hooks/web/useWatermark.ts</code></td>
+</tr>
+<tr>
+<td>PDF 导出</td>
+<td><code>iep-web/src/utils/htmlToPDF.ts</code></td>
+</tr>
+<tr>
+<td>动态路由/字典</td>
+<td><code>iep-web/src/permission.ts</code>、<code>src/store/modules/dict.ts</code></td>
+</tr>
+<tr>
+<td>答题卡/题型组件</td>
+<td><code>zzb-app/src/pages/tab/components/answerCard</code>、<code>question</code></td>
+</tr>
+<tr>
+<td>权限组件</td>
+<td><code>volunteer-admin-web2/src/components/Authority/src/Authority.vue</code></td>
+</tr>
+<tr>
+<td>DOMPurify</td>
+<td><code>seal-channel-web</code> 提交 2025-08-14</td>
+</tr>
+<tr>
+<td>钉钉签名</td>
+<td><code>lhg/DINGTALK_SIGN_SOLUTION.md</code>、<code>packages/shared/utils/dingtalk.ts</code></td>
+</tr>
+<tr>
+<td>配置化表格</td>
+<td><code>fertileWoman-new/src/components/table/commonTable.vue</code></td>
+</tr>
+<tr>
+<td>自适应 mixin</td>
+<td><code>fertileWoman-new/src/components/Mixins/resize.js</code></td>
+</tr>
+<tr>
+<td>一键部署</td>
+<td><code>webapp/deployConfig.js</code></td>
+</tr>
+<tr>
+<td>排号大屏</td>
+<td><code>bacc6_mobile/src/views/sortNumber/index.vue</code></td>
+</tr>
+<tr>
+<td>翻屏/大屏/进度环</td>
+<td><code>productnav/src/views/Home.vue</code>、<code>ProgressBar.vue</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><em>只列了能指到代码的。哪条想再挖深（比如把 YTable 的配置项讲成一套设计），说一声。</em></p>
+
+</article>
+<nav class="pn-nav"><a class="pn" href="./huashu.html"><span>上一篇</span><b>面试话术（简版）</b></a><a class="pn next" href="./timu.html"><span>下一篇</span><b>面试题与答案 v3</b></a></nav>
+<footer class="foot">
+  <span>项目亮点（创联 + 瀚维）</span>
+  <span>生成于 2026-10-23</span>
+</footer>
+</main>
+
+<button class="totop" id="toTop" type="button" aria-label="回到顶部">↑</button>
+<script src="assets/app.js"></script>
+</body>
+</html>
